@@ -13,6 +13,7 @@ import (
 )
 
 const portNumber = ":8090"
+
 var app config.AppConfig
 var session *scs.SessionManager
 
@@ -55,4 +56,5 @@ func main() {
 	if err != nil {
 		log.Fatal("error starting server", err)
 	}
+	fmt.Printf("ready to use")
 }
