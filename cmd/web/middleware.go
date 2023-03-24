@@ -6,7 +6,6 @@ import (
 	"github.com/justinas/nosurf"
 )
 
-
 // NoSurf adds CSRF protection to all POST requests
 func NoSurf(next http.Handler) http.Handler {
 
@@ -24,7 +23,6 @@ func SessionLoad(next http.Handler) http.Handler {
 
 	return session.LoadAndSave(next)
 }
-
 
 // func Logger(next http.Handler) http.Handler{
 

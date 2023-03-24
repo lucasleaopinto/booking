@@ -50,9 +50,9 @@ func (f *Form) Valid() bool {
 // MinLenght checks for string minimum length
 func (f *Form) MinLenght(field string, lenght int, r *http.Request) bool {
 
-	//item := r.Form.Get(field)
-
-	if len(f.Get(field)) < lenght {
+	item := r.Form.Get(field)
+	//if len(f.Get(field)) < lenght {
+	if len(item) < lenght {
 		f.Errors.Add(field, fmt.Sprintf("This field must be at least %d characters long", lenght))
 		return false
 	}
