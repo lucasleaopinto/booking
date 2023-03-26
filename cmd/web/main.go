@@ -22,6 +22,29 @@ var session *scs.SessionManager
 // main is the main application function
 func main() {
 
+	// http.HandleFunc("/", handlers.Repo.Home)
+	// http.HandleFunc("/about", handlers.Repo.About)
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("starting application on port %s", portNumber)
+	// http.ListenAndServe(portNumber, nil)
+
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal("error starting server", err)
+	}
+	fmt.Printf("ready to use")
+}
+
+func run() error {
 	// what am I going to put in the session
 	gob.Register(models.Reservation{})
 
@@ -38,7 +61,8 @@ func main() {
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("cannot create template cacw")
+		log.Fatal("cannot create template cache")
+		return err
 	}
 
 	app.TemplateCache = tc
@@ -48,20 +72,5 @@ func main() {
 	handlers.NewHandlers(repo)
 	render.NewTemplates(&app)
 
-	// http.HandleFunc("/", handlers.Repo.Home)
-	// http.HandleFunc("/about", handlers.Repo.About)
-
-	fmt.Printf("starting application on port %s", portNumber)
-	// http.ListenAndServe(portNumber, nil)
-
-	srv := &http.Server{
-		Addr:    portNumber,
-		Handler: routes(&app),
-	}
-
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal("error starting server", err)
-	}
-	fmt.Printf("ready to use")
+	return nil
 }

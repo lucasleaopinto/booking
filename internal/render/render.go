@@ -14,6 +14,7 @@ import (
 )
 
 var app *config.AppConfig
+var pathToTemplate = "./templates"
 
 // NewTemplates sets the confog for the template packaage
 func NewTemplates(a *config.AppConfig) {
@@ -83,8 +84,8 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, td *mod
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 
-	//get all of the files named *.page.tmp from ./templates
-	pages, err := filepath.Glob("./templates/*.page.tmpl")
+	//get all the files named *.page.tmp from ./templates
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplate))
 	if err != nil {
 		return myCache, err
 	}
@@ -98,13 +99,13 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 			return myCache, err
 		}
 
-		matches, err := filepath.Glob("./templates/*.layout.tmpl")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplate))
 		if err != nil {
 			return myCache, err
 		}
 
 		if len(matches) > 0 {
-			ts, err = ts.ParseGlob("./templates/*.layout.tmpl")
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplate))
 			if err != nil {
 				return myCache, err
 			}
