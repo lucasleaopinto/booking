@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/gob"
+	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -9,13 +10,17 @@ import (
 	"github.com/lucasleaopinto/bookings/internal/config"
 	"github.com/lucasleaopinto/bookings/internal/models"
 	"github.com/lucasleaopinto/bookings/internal/render"
+	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 	"time"
 )
 
 var app config.AppConfig
 var session *scs.SessionManager
+var pathToTemplates = "./../../templates"
+var functions = template.FuncMap{}
 
 func getRoutes() http.Handler {
 	gob.Register(models.Reservation{})
@@ -31,13 +36,13 @@ func getRoutes() http.Handler {
 
 	app.Session = session
 
-	tc, err := render.CreateTemplateCache()
+	tc, err := CreateTestTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
 	}
 
 	app.TemplateCache = tc
-	app.UseCache = false
+	app.UseCache = true
 
 	repo := NewRepo(&app)
 	NewHandlers(repo)
@@ -46,7 +51,7 @@ func getRoutes() http.Handler {
 	mux := chi.NewRouter()
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
-	mux.Use(NoSurf)
+	//mux.Use(NoSurf)
 	mux.Use(SessionLoad)
 
 	mux.Get("/", Repo.Home)
@@ -65,7 +70,7 @@ func getRoutes() http.Handler {
 
 	fileServer := http.FileServer(http.Dir("./static"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
-	return
+	return mux
 }
 
 // NoSurf adds CSRF protection to all POST requests
@@ -84,4 +89,48 @@ func NoSurf(next http.Handler) http.Handler {
 func SessionLoad(next http.Handler) http.Handler {
 
 	return session.LoadAndSave(next)
+}
+
+// CreateTestTemplateCache create templates using html/template
+func CreateTestTemplateCache() (map[string]*template.Template, error) {
+	myCache := map[string]*template.Template{}
+
+	//get all the files named *.page.tmp from ./templates
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates))
+	if err != nil {
+		return myCache, err
+	}
+
+	//range through all files ending with *.page.tmpl
+	for _, page := range pages {
+		name := filepath.Base(page)
+		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
+		if err != nil {
+			fmt.Printf("page error:%s ", page)
+			return myCache, err
+		}
+
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
+		if err != nil {
+			return myCache, err
+		}
+
+		if len(matches) > 0 {
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
+			if err != nil {
+				return myCache, err
+			}
+		}
+
+		myCache[name] = ts
+	}
+
+	if len(myCache) == 0 {
+		fmt.Println("no template loaded ")
+		//TO DO
+		//criar um erro customizado
+	}
+
+	return myCache, nil
+
 }
