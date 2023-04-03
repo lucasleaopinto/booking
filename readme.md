@@ -14,3 +14,6 @@ go install github.com/gobuffalo/pop/v6/soda@latest
 
 // bellow 1.16
 go get github.com/gobuffalo/pop/...
+
+Execute 
+soda migrate

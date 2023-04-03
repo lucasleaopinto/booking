@@ -8,3 +8,6 @@ create_table("reservations") {
   t.Column("end_date", "date", {})
   t.Column("room_id", "integer", {})
 }
+
+add_index("reservations","email",{})
+add_index("reservations","last_name",{})
