@@ -3,8 +3,9 @@ package main
 import "testing"
 
 func TestRun(t *testing.T) {
-	err := run()
+	_, err := run()
 	if err != nil {
 		t.Error("failed main run")
 	}
+	//defer db.SQL.Close()
 }

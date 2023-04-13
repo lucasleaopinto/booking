@@ -6,9 +6,15 @@ to run from Linux or Mac execute
 Install
 go get github.com/bmizerany/pat
 go get github.com/asaskevich/govalidator
+go install github.com/gobuffalo/pop/v6/soda@latest
+go get github.com/jackc/pgx/v4
+
 
  
 
+
+
+Comment 
 to using go version above 1.16
 go install github.com/gobuffalo/pop/v6/soda@latest
 

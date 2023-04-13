@@ -18,8 +18,8 @@ var app *config.AppConfig
 var pathToTemplates = "./templates"
 var functions = template.FuncMap{}
 
-// NewTemplates sets the confog for the template packaage
-func NewTemplates(a *config.AppConfig) {
+// NewRenderer sets the config for the template package
+func NewRenderer(a *config.AppConfig) {
 	app = a
 }
 
@@ -32,8 +32,8 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	return td
 }
 
-// RenderTemplate render templates using html/template
-func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) error {
+// Template render templates using html/template
+func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) error {
 	//create a template cache
 	//fmt.Println("entrou no render 01 ")
 
@@ -125,8 +125,8 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 // var tc = make(map[string]*template.Template)
 
-// //RenderTemplate render templates using html/template and add to cache
-// func RenderTemplate(w http.ResponseWriter, t string) {
+// //Template render templates using html/template and add to cache
+// func Template(w http.ResponseWriter, t string) {
 
 // 	var err error
 // 	var tmpl *template.Template
