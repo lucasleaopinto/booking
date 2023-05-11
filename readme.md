@@ -23,3 +23,7 @@ go get github.com/gobuffalo/pop/...
 
 Execute 
 soda migrate
+
+
+Parsing and formatting date/time in go:
+https://www.pauladamsmith.com/blog/2011/05/go_time.html
